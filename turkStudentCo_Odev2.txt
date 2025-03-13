@@ -1,0 +1,30 @@
+SORU 1-) Invoice tablosunda, tüm değerleri NULL olan kayıtların sayısını bulmanız
+isteniyor.
+ÇÖZÜM 1-) Burada tüm değerlerin null olması demek tablodaki tüm kolon değerlerinin null olması anlamına geliyor(primery key hariç) bu sebeple tüm kolon değerlerinin null olduğu koşulu kontrol eden ve bu kayıtların toplam sayısını count fonksiyonu ile hesaplayan şu sorgu kullanılabilir(sorgu sonucu kayıt sayısı 0 olarak çıkıyor):
+
+select count(*) as row_count from invoice i where i.customer_id is null 
+and i.invoice_date is null
+and i.billing_address is null
+and i.billing_city is null 
+and i.billing_state is null
+and i.billing_country is null 
+and i.billingpostal_code  is null
+and i.total is null --row_count:0
+
+SORU 2-)Total değerlerinde bir hata olduğunu belirtiyorlar.
+Bu değerlerin iki katını görmek ve eski versiyonlarıyla birlikte karşılaştırmak için bir
+sorgu yazmanız isteniyor. Ayrıca, verilerin daha rahat takip edilebilmesi için,
+tablonun yeni versiyonuna ait kolona göre büyükten küçüğe sıralama yapılması
+isteniyor. 
+ÇÖZÜM 2-) Bunun için total kolunun 2 katını hesaplama işlemi ve bu işlemi yeni bir kolan haline getirmek gerekiyor ayrıca bu yeni kolon üzerinden order by ile azalan sırada bir sıralama yapmak gerekiyor. Bu işlem için şu sorgu kullanılabilir:
+
+select total, (total*2) as new_total_values from invoice i order by new_total_values
+
+SORU 3-)Adres kolonundaki verileri, soldan 3 karakter ve sağdan 4 karakter alarak
+birleştirmeniz ve "Açık Adres" olarak yazmanız isteniyor. Ayrıca, bu yeni açık adresi
+2013 yılı ve 8. ay’a göre filtrelemeniz gerekiyor. 
+ÇÖZÜM 3-)Bunun  için left ve right fonksiyonları ile ilgili kolonun değerleri üzerinde istenilen işlemler gerçekleştirilir ve ||(string birleştirme) operatörü ile 2 işlemin sonucu birleştirilerek açık adres kolunu oluşturulur. Tarih filtereleme işlemi ay ve yıl değerleri özelinde istendiği için date_part fonksiyonu ile igili yıl ve ay değerleri where koşulu altında kontrol edilir. Bu işlemlerinin tamamını şu sorgu ile sağlanabilir:
+
+select left(i.billing_address,3) || right(i.billing_address,4) as acik_adres
+from invoice i 
+where date_part('year',i.invoice_date )=2013 and date_part('month',i.invoice_date )=8
