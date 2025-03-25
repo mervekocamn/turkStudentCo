@@ -1,0 +1,28 @@
+Soru 1-) “USA” ülkesine ait, 2009 yılı içerisinde oluşturulmuş tüm faturaların (Invoice) toplamını
+listeleyen bir sorgu yazınız.
+
+Çözüm-) Invoice tablosunda Usa ülkesindeki 2009 yılında kesilen faturaların sayısını isteyen bu sorgu için invoice tablosu üzerinde where ile ülke ve yıl koşulları eklenir ve bu koşulları sağlayan kayıtların sayısı count fonksiyonu ile elde edilir. Bu sorguya aşağıda yer verilmiştir:
+
+select count(*) as Invoice_Count from invoice i where i.billing_country = 'USA' and date_part('year',i.invoice_date )=2009
+***Sorgu sonucu 17 sayısı elde edilmiştir. Yani USA ülkesinde 2009 yılında 17 tane fatura kesilmiştir.
+
+Soru 2-)Tüm parça (track) bilgilerini, bu parçaların ait olduğu playlisttrack ve playlist tablolarıyla birleştirerek
+(JOIN) listeleyen bir sorgu yazınız.
+
+Çözüm-) Bu sorgu 3 tablonun uygun kolonlar ile birleştirilmesini istiyor. Bu sebeple track tablosunu ve playlist_track tablosunun track_id bilgileri ile birleştiriyoruz, playlist_track tablosu ve playlist tablosunu playlist_id bilgisi ile birleştiririz. Bu Sorguya aşağıda yer verilmiştir:
+
+select * from track t 
+join playlisttrack pt on t.track_id =pt.track_id
+join playlist p on pt.playlist_id =p.playlist_id 
+
+Soru 3-) "Let There Be Rock" adlı albüme ait tüm parçaları (Track) listeleyen, sanatçı (Artist) bilgisini
+de içeren bir sorgu yazınız. Ayrıca, sonuçları parça süresi (milliseconds) büyükten küçüğe
+sıralayınız.
+
+Çözüm-) Bu sorguda ilgili albüme ait parçaların bilgilerine ve aynı zamanda bu albümlerin artistlerine yer verilmesi isteniyor. Ayrıca elde edilen sonucun parçaların süresine göre azalan sırada listelenmesi isteniyor. 	Bu sebeple albüm tablosu ve track tablosu album_is bilgisi ile, albüm ve artist tablosu artist_id bilgileri ile birleştirilmelidir. Bu işlem join işlemi ile yapılır. Ardında elde edilen sorgunun listeleyeceği veriler track tablosundaki milliseconds kolonuna göre azalan sırada sıralanması için order by milliseconds desc kalıbı kullanılmalıdır. İlgili sorguya aşağıda yer verilmiştir:
+
+select * from album a 
+join track t on a.album_id =t.album_id 
+join artist ar on a.artist_id =ar.artist_id 
+where a.title='Let There Be Rock'
+order by t.milliseconds desc
